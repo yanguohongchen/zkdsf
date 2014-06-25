@@ -42,6 +42,10 @@ public class Test1 {
 		 zk.exists("/testRootPath/testChildPathOne", true);
 		 System.out.println(new String(zk.getData("/testRootPath/testChildPathOne", false, null)));
 		 zk.setData("/testRootPath/testChildPathOne","modifyChildDataOne".getBytes(),-1); 
+		 System.out.println("test......");
+		 zk.exists("/testRootPath/testChildPathOne", true);
+		 zk.setData("/testRootPath/testChildPathOne","modifyChildDataOne".getBytes(),-1); 
+		 System.out.println("test......");
 		 System.out.println(new String(zk.getData("/testRootPath/testChildPathOne", false, null)));
 		 System.out.println("目录节点状态：["+zk.exists("/testRootPath",true)+"]"); 
 		 // 创建另外一个子目录节点
