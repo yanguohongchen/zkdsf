@@ -40,15 +40,21 @@ public class RegeisterClient {
 
 		servicename = subscribeInfo.getServicename();
 
-		//先判断servicename是否存在
-		Stat stat = zk.exists("/"+servicename, false);
-		if(stat==null){
-			throw new RuntimeException(servicename+" is no exist,please create it!");
-		}
-		
-		
 		zk = new ZkClient(connecthoststring, 10000,
 				new RegeisterClientWatcher()).getZk();
+
+		// 先判断servicename是否存在
+		Stat stat = zk.exists("/" + servicename, false);
+		if (stat == null) {
+			throw new RuntimeException(servicename
+					+ " is no exist,please create it!");
+		}
+
+		stat = zk.exists("/" + servicename + "/clientgroup", false);
+		if (stat == null) {
+			zk.create("/" + servicename + "/clientgroup", null,
+					Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		}
 
 		String path = "/" + subscribeInfo.getServicename() + "/"
 				+ "clientgroup" + "/"
@@ -56,7 +62,7 @@ public class RegeisterClient {
 				+ subscribeInfo.getIp();
 
 		zk.create(path, gson.toJson(subscribeInfo).getBytes(),
-				Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
 		// 获取服务列表。并监听
 		updateServerList("/" + subscribeInfo.getServicename() + "/"
@@ -70,8 +76,9 @@ public class RegeisterClient {
 		Stat stat = new Stat();
 		serverInstanceInfos.clear();
 		for (String child : childs) {
+			String childpath = "/" + servicename + "/servergroup/" + child;
 			serverInstanceInfos.put(child, gson.fromJson(
-					new String(zk.getData(path, serverDataWatcher, stat)),
+					new String(zk.getData(childpath, serverDataWatcher, stat)),
 					ServerInstanceInfo.class));
 		}
 		zk.getChildren(path, serverDataWatcher);
