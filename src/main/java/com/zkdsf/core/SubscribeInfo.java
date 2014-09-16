@@ -2,11 +2,10 @@ package com.zkdsf.core;
 
 public class SubscribeInfo {
 
-	
 	private String registerclienthostname;
-	
+
 	private String ip;
-	
+
 	private String servicename;
 
 	public String getRegisterclienthostname() {
@@ -32,7 +31,5 @@ public class SubscribeInfo {
 	public void setServicename(String servicename) {
 		this.servicename = servicename;
 	}
-	
-	
-	
+
 }

@@ -22,8 +22,7 @@ import com.zkdsf.core.ZkClient;
 
 public class RegeisterClient {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(RegeisterClient.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(RegeisterClient.class.getName());
 
 	public static Map<String, ServerInstanceInfo> serverInstanceInfos = new HashMap<String, ServerInstanceInfo>();
 
@@ -35,51 +34,38 @@ public class RegeisterClient {
 
 	private ServerDataWatcher serverDataWatcher = new ServerDataWatcher();
 
-	public RegeisterClient(String connecthoststring, SubscribeInfo subscribeInfo)
-			throws KeeperException, InterruptedException, IOException {
+	public RegeisterClient(String connecthoststring, SubscribeInfo subscribeInfo) throws KeeperException, InterruptedException, IOException {
 
 		servicename = subscribeInfo.getServicename();
 
-		zk = new ZkClient(connecthoststring, 10000,
-				new RegeisterClientWatcher()).getZk();
+		zk = new ZkClient(connecthoststring, 10000, new RegeisterClientWatcher()).getZk();
 
 		// 先判断servicename是否存在
 		Stat stat = zk.exists("/" + servicename, false);
 		if (stat == null) {
-			throw new RuntimeException(servicename
-					+ " is no exist,please create it!");
+			throw new RuntimeException(servicename + " is no exist,please create it!");
 		}
 
 		stat = zk.exists("/" + servicename + "/clientgroup", false);
 		if (stat == null) {
-			zk.create("/" + servicename + "/clientgroup", null,
-					Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+			zk.create("/" + servicename + "/clientgroup", null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 		}
 
-		String path = "/" + subscribeInfo.getServicename() + "/"
-				+ "clientgroup" + "/"
-				+ subscribeInfo.getRegisterclienthostname() + ":"
-				+ subscribeInfo.getIp();
+		String path = "/" + subscribeInfo.getServicename() + "/" + "clientgroup" + "/" + subscribeInfo.getRegisterclienthostname() + ":" + subscribeInfo.getIp();
 
-		zk.create(path, gson.toJson(subscribeInfo).getBytes(),
-				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		zk.create(path, gson.toJson(subscribeInfo).getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 
-		// 获取服务列表。并监听
-		updateServerList("/" + subscribeInfo.getServicename() + "/"
-				+ "servergroup");
+//		updateServerList("/" + subscribeInfo.getServicename() + "/" + "servergroup");
 
 	}
 
-	public synchronized void updateServerList(String path)
-			throws KeeperException, InterruptedException {
+	public synchronized void updateServerList(String path) throws KeeperException, InterruptedException {
 		List<String> childs = zk.getChildren(path, serverDataWatcher);
 		Stat stat = new Stat();
 		serverInstanceInfos.clear();
 		for (String child : childs) {
 			String childpath = "/" + servicename + "/servergroup/" + child;
-			serverInstanceInfos.put(child, gson.fromJson(
-					new String(zk.getData(childpath, serverDataWatcher, stat)),
-					ServerInstanceInfo.class));
+			serverInstanceInfos.put(child, gson.fromJson(new String(zk.getData(childpath, serverDataWatcher, stat)), ServerInstanceInfo.class));
 		}
 		zk.getChildren(path, serverDataWatcher);
 	}

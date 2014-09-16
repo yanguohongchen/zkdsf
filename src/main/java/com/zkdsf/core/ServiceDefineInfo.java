@@ -1,18 +1,17 @@
 package com.zkdsf.core;
 
-public class ServiceInfo {
+public class ServiceDefineInfo {
 
-	
 	private String servicename;
-	
+
 	private String description;
-	
+
 	private String protol;
-	
+
 	private String routestrage;
-	
+
 	private String failstrage;
-	
+
 	private int timeout;
 
 	private String version;
@@ -72,9 +71,5 @@ public class ServiceInfo {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
-	
-	
-	
-	
+
 }

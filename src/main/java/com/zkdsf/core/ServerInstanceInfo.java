@@ -3,7 +3,7 @@ package com.zkdsf.core;
 public class ServerInstanceInfo {
 
 	private String ip;
-	
+
 	private int port;
 
 	private String state;
@@ -41,6 +41,5 @@ public class ServerInstanceInfo {
 	public void setWeight_value(int weight_value) {
 		this.weight_value = weight_value;
 	}
-	
-	
+
 }

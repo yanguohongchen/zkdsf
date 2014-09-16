@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.zookeeper.KeeperException;
 
 import com.zkdsf.core.ServerInstanceInfo;
-import com.zkdsf.core.ServiceInfo;
+import com.zkdsf.core.ServiceDefineInfo;
 import com.zkdsf.core.SubscribeInfo;
 import com.zkdsf.register.RegeisterClient;
 import com.zkdsf.register.Service;
